@@ -26,7 +26,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[2]  # src/heart_twin/echonet_integration.py -> project root
+ROOT = Path(__file__).resolve().parents[1]  # src/heart_twin/echonet_integration.py -> project root
 _VENDOR_DIR = ROOT / "vendor" / "echonet_dynamic"
 if str(_VENDOR_DIR) not in sys.path:
     sys.path.insert(0, str(_VENDOR_DIR))

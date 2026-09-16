@@ -10,14 +10,14 @@ import tempfile
 import pandas as pd
 import streamlit as st
 
-ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(ROOT / "src"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "vendor" / "echonet_dynamic"))
 
-from heart_twin.echonet_integration import infer_ef_from_video, infer_volumes_from_segmentation  # noqa: E402
-from heart_twin.imaging import ImagingError, convert_dicom_to_avi, inspect_video, preview_frame_png  # noqa: E402
-from heart_twin.patient import PatientInputError, PatientProfile  # noqa: E402
-from heart_twin.twin import ScenarioControls, TwinComparison, run_twin  # noqa: E402
+from backend.echonet_integration import infer_ef_from_video, infer_volumes_from_segmentation  # noqa: E402
+from backend.imaging import ImagingError, convert_dicom_to_avi, inspect_video, preview_frame_png  # noqa: E402
+from backend.patient import PatientInputError, PatientProfile  # noqa: E402
+from backend.twin import ScenarioControls, TwinComparison, run_twin  # noqa: E402
 
 
 st.set_page_config(page_title="Heart failure digital twin", page_icon=":material/favorite:", layout="wide")
@@ -204,7 +204,6 @@ with st.sidebar:
 
         lv_diameter = st.number_input("LV end-diastolic diameter (cm, optional)", min_value=1.0, max_value=10.0, value=None, key="lv_diameter")
         nyha = st.selectbox("NYHA class", ["Not provided", "I", "II", "III", "IV"], key="nyha")
-        bnp = st.number_input("BNP (pg/mL, optional)", min_value=0.0, max_value=100_000.0, value=None, key="bnp")
         submitted = st.form_submit_button("Create or update twin", type="primary", icon=":material/person_add:")
 
     if submitted:
@@ -238,7 +237,6 @@ with st.sidebar:
                 age_band=age_band,
                 sex=sex,
                 nyha_class=nyha,
-                bnp_pg_ml=float(bnp) if bnp is not None else None,
             )
         except PatientInputError as error:
             st.error(str(error))
@@ -313,9 +311,7 @@ with st.expander("Model scope and interpretation"):
         "and aortic valves, and arterial + venous compliance, so blood volume is conserved across "
         "cycles. What-if sliders perturb this fitted baseline; they do not re-fit it from new data."
     )
-    st.write(
-        "The Zigong cohort remains an offline research dataset. No patient-level records, unvalidated outcome-risk estimates, or EchoNet training labels are displayed as clinical predictions."
-    )
+
 
 st.subheader("Echocardiography technical check")
 st.caption("Upload only research-approved, de-identified files. This inspector reports technical metadata and a preview only; it does not run EF/volume inference.")
