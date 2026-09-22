@@ -1,0 +1,26 @@
+# (pytest tests/test_api.py, 9/9 passing) on Python 3.12. Tested 2026-09.
+
+# --- Core API ---
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+python-multipart==0.0.32       # required by FastAPI for file uploads (UploadFile/Form)
+
+# --- heart_twin domain package ---
+numpy==2.4.4
+opencv-python-headless==4.13.0.92
+pydicom==3.0.2
+joblib==1.5.3
+scikit-learn==1.8.0
+
+# --- EchoNet-Dynamic inference (only /api/echo/infer needs these) ---
+# These are large (torch alone is several hundred MB) and pull in CUDA
+# libraries by default even on machines with no GPU. If you don't have an
+# NVIDIA GPU, install the smaller CPU-only build instead of the two lines
+# below:
+#   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0
+torchvision==0.29.0
+
+# --- Testing only (not needed to run the API itself) ---
+pytest==9.1.1
+httpx==0.28.1

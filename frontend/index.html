@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071a2e" />
+    <meta name="description" content="Heart failure digital-twin research interface." />
+    <title>CardioTwin | Heart failure digital twin</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="#top" aria-label="CardioTwin home">
+          <span class="brand-mark" aria-hidden="true">♡</span>
+          <span><strong>CardioTwin</strong><small>RESEARCH WORKSPACE</small></span>
+        </a>
+
+        <nav class="nav-list" aria-label="Workspace sections">
+          <button class="nav-item active" data-view="workspace" type="button"><span>▦</span> Workspace</button>
+          <button class="nav-item" data-view="patients" type="button"><span>◉</span> Patient library</button>
+          <button class="nav-item" data-view="methods" type="button"><span>◇</span> Model methods</button>
+        </nav>
+
+        <section class="connection-card" aria-live="polite">
+          <div class="connection-top"><span id="apiDot" class="status-dot checking"></span><span id="apiStatus">Checking API</span></div>
+          <p id="apiCaption">Looking for the simulation service.</p>
+          <button class="text-button" id="openSettings" type="button">Connection settings</button>
+        </section>
+
+        <div class="sidebar-bottom">
+          <span class="research-pill">RESEARCH USE ONLY</span>
+          <p>Not clinically validated. Do not use for diagnosis or treatment decisions.</p>
+        </div>
+      </aside>
+
+      <main id="top" class="main-content">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Open navigation">☰</button>
+          <div class="breadcrumbs"><span>Heart failure programme</span><b>/</b><strong id="crumbPatient">New patient draft</strong></div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="toggleTheme" type="button" aria-label="Toggle display theme">◐</button>
+            <button class="profile-button" type="button" aria-label="Researcher profile">AK</button>
+          </div>
+        </header>
+
+        <section id="workspaceView" class="view active-view">
+          <section class="hero">
+            <div>
+              <p class="eyebrow">PATIENT-SPECIFIC SIMULATION</p>
+              <h1>Build a clearer view of cardiac function.</h1>
+              <p class="hero-copy">Create a research twin from clinical measurements, EchoNet output, or both—then explore a transparent what-if scenario without overwriting the source record.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="button ghost" id="choosePatient" type="button">Browse patients</button>
+              <button class="button primary" id="newPatient" type="button"><span>＋</span> New patient</button>
+            </div>
+          </section>
+
+       
+
+          <div class="workspace-grid">
+            <section id="patientOverview" class="panel patient-overview" aria-live="polite">
+              <div class="panel-heading compact"><div><p class="eyebrow">ACTIVE PATIENT</p><h2 id="overviewTitle">No patient selected</h2></div><span id="overviewState" class="state-badge waiting">AWAITING RECORD</span></div>
+              <div id="patientOverviewEmpty" class="patient-overview-empty"><span class="overview-heart">♡</span><p>Select a research record or create a new patient to begin.</p><button id="overviewNewPatient" class="button primary wide" type="button">＋ New patient</button></div>
+              <div id="patientOverviewDetails" hidden>
+                <p id="overviewMeta" class="overview-meta"></p>
+                <dl class="patient-facts"><div><dt>LVEF</dt><dd id="overviewEf">—</dd></div><div><dt>Heart rate</dt><dd id="overviewHr">—</dd></div><div><dt>Blood pressure</dt><dd id="overviewBp">—</dd></div><div><dt>NYHA class</dt><dd id="overviewNyha">—</dd></div></dl>
+                <div class="overview-source"><span>Measurement source</span><b id="overviewSource">—</b></div>
+                <button id="editPatient" class="button ghost wide" type="button">Edit patient record</button>
+                <button id="changePatient" class="text-button overview-change" type="button">Choose another patient</button>
+              </div>
+            </section>
+            <section class="panel patient-panel">
+              <div class="panel-heading">
+                <div><p class="eyebrow">01 · PATIENT RECORD</p><h2 id="patientFormTitle">New patient draft</h2></div>
+                <div class="editor-heading-actions"><span id="draftState" class="state-badge draft">NOT SAVED</span><button id="closePatientEditor" class="close-editor" type="button" aria-label="Close patient editor">×</button></div>
+              </div>
+
+              <div class="stepper" aria-label="Twin creation progress">
+                <span class="step active"><b>1</b> Measurements</span><i></i><span class="step"><b>2</b> Validate</span><i></i><span class="step"><b>3</b> Simulate</span>
+              </div>
+
+              <form id="patientForm" novalidate>
+                <div class="form-section-label"><span>Identity and context</span><em>Workspace fields are held in this browser session</em></div>
+                <div class="field-grid three">
+                  <label>Patient / study ID<input id="identifier" name="identifier" placeholder="e.g. HF-042" required maxlength="60" /></label>
+                  <label>Age band<select id="ageBand" name="ageBand"><option>Not provided</option><option>≤49</option><option>50–59</option><option>60–69</option><option>70–79</option><option>≥80</option></select></label>
+                  <label>Sex<select id="sex" name="sex"><option>Not provided</option><option>Female</option><option>Male</option></select></label>
+                </div>
+
+                <div class="form-section-label"><span>Haemodynamics</span><em><span class="required-dot">●</span> required to run the twin</em></div>
+                <div class="field-grid three">
+                  <label>Heart rate <span class="unit">bpm</span><input id="heartRate" name="heartRate" type="number" min="1" max="240" step="1" placeholder="72" required /></label>
+                  <label>Systolic BP <span class="unit">mmHg</span><input id="systolicBp" name="systolicBp" type="number" min="1" max="300" step="1" placeholder="120" required /></label>
+                  <label>Diastolic BP <span class="unit">mmHg</span><input id="diastolicBp" name="diastolicBp" type="number" min="1" max="200" step="1" placeholder="80" required /></label>
+                </div>
+
+                <div class="measurement-heading">
+                  <div><span class="form-section-label no-margin">Ventricular measurements</span><p>Choose the accountable source of EF, EDV and ESV.</p></div>
+                  <button id="whyVolumes" class="help-link" type="button">How are volumes used? <span>↗</span></button>
+                </div>
+                <div class="source-tabs" role="tablist" aria-label="Measurement source">
+                  <button class="source-tab active" type="button" role="tab" aria-selected="true" data-source="manual"><span class="tab-icon">⌁</span><span><b>Manual entry</b><small>Enter reported echo values</small></span></button>
+                  <button class="source-tab" type="button" role="tab" aria-selected="false" data-source="echonet"><span class="tab-icon">✦</span><span><b>EchoNet extraction</b><small>Infer values from an A4C video</small></span></button>
+                </div>
+
+                <div id="manualFields" class="source-content active-source">
+                  <div class="field-grid three">
+                    <label>LVEF <span class="unit">%</span><input id="lvef" name="lvef" type="number" min="1" max="100" step="0.1" placeholder="35" required /></label>
+                    <label>EDV <span class="unit">mL · optional</span><input id="edv" name="edv" type="number" min="1" max="1000" step="0.1" placeholder="155" /></label>
+                    <label>ESV <span class="unit">mL · optional</span><input id="esv" name="esv" type="number" min="0" max="1000" step="0.1" placeholder="101" /></label>
+                  </div>
+                  <p class="field-hint">Provide both EDV and ESV, or neither. If omitted, the model estimates volumes from LVEF and other inputs.</p>
+                </div>
+
+                <div id="echoNetFields" class="source-content" hidden>
+                  <div class="echonet-intro"><span class="sparkle">✦</span><div><b>EchoNet-Dynamic inference</b><p>Upload a research-approved, de-identified A4C study. Inference is never automatic—you must run it and explicitly confirm its values.</p></div><span class="a4c-tag">A4C REQUIRED</span></div>
+                  <label id="dropzone" class="dropzone" for="echoFile">
+                    <input id="echoFile" type="file" accept=".dcm,.dicom,.avi,.mp4,.mov" />
+                    <span class="upload-icon">⇧</span><b id="uploadLabel">Drop an echo study here</b><small id="uploadHint">DICOM, AVI, MP4 or MOV · max 200 MB</small><span class="browse-file">Choose file</span>
+                  </label>
+                  <div class="echo-action-row"><button id="runEchoNet" class="button dark" type="button" disabled>Run EchoNet extraction <span>→</span></button><p id="echoRunState">Select a file to begin.</p></div>
+                  <div id="echoResult" class="echo-result" hidden></div>
+                </div>
+
+                <div class="field-grid two supporting-fields">
+                  <label>LV end-diastolic diameter <span class="unit">cm · optional</span><input id="lvDiameter" name="lvDiameter" type="number" min="1" max="10" step="0.1" placeholder="5.6" /></label>
+                  <label>NYHA class<select id="nyha" name="nyha"><option>Not provided</option><option>I</option><option>II</option><option>III</option><option>IV</option></select></label>
+                </div>
+
+                <div id="formError" class="form-error" role="alert" hidden></div>
+                <div class="form-actions">
+                  <button id="validateBtn" class="button ghost" type="button">Validate inputs</button>
+                  <button id="saveAndRunBtn" class="button primary" type="submit">Save &amp; run twin <span>→</span></button>
+                </div>
+              </form>
+            </section>
+
+            <aside class="right-rail">
+              <section class="panel scenario-panel">
+                <div class="panel-heading compact"><div><p class="eyebrow">02 · WHAT-IF SCENARIO</p><h2>Virtual intervention</h2></div><button id="resetScenario" class="text-button" type="button">Reset</button></div>
+                <p class="scenario-copy">Changes affect the virtual model only. Original measurements stay intact.</p>
+                <div class="control-group">
+                  <label for="contractility">Contractility <output id="contractilityOut">0%</output></label><input id="contractility" type="range" min="-50" max="50" value="0" step="5" /><div class="range-labels"><span>−50%</span><span>Baseline</span><span>+50%</span></div>
+                </div>
+                <div class="control-group">
+                  <label for="preload">Preload <output id="preloadOut">0%</output></label><input id="preload" type="range" min="-40" max="40" value="0" step="5" /><div class="range-labels"><span>−40%</span><span>Baseline</span><span>+40%</span></div>
+                </div>
+                <div class="control-group">
+                  <label for="afterload">Afterload <output id="afterloadOut">0%</output></label><input id="afterload" type="range" min="-40" max="40" value="0" step="5" /><div class="range-labels"><span>−40%</span><span>Baseline</span><span>+40%</span></div>
+                </div>
+                <div class="control-group">
+                  <label for="heartRateDelta">Heart-rate change <output id="heartRateDeltaOut">0 bpm</output></label><input id="heartRateDelta" type="range" min="-30" max="30" value="0" step="5" /><div class="range-labels"><span>−30 bpm</span><span>Baseline</span><span>+30 bpm</span></div>
+                </div>
+                <button id="rerunScenario" class="button wide dark" type="button" disabled>Run scenario <span>→</span></button>
+              </section>
+
+              <section class="panel source-note">
+                <span class="source-note-icon">i</span><div><b>Traceable inputs</b><p id="sourceSummary">Enter a patient record to establish a measurement source.</p></div>
+              </section>
+            </aside>
+          </div>
+
+          <section id="resultsSection" class="results-section" aria-live="polite">
+            <div class="results-heading"><div><p class="eyebrow">03 · TWIN OUTPUT</p><h2>Virtual cardiovascular state</h2><p id="resultsSubheading">Run a validated patient twin to view baseline and scenario physiology.</p></div><span id="resultState" class="state-badge waiting">AWAITING RUN</span></div>
+            <div id="metricGrid" class="metric-grid">
+              <article class="metric-card"><span>Ejection fraction</span><strong id="metricEf">—</strong><small id="metricEfDelta">Scenario − baseline</small></article>
+              <article class="metric-card"><span>Stroke volume</span><strong id="metricSv">—</strong><small id="metricSvDelta">Scenario − baseline</small></article>
+              <article class="metric-card"><span>Cardiac output</span><strong id="metricCo">—</strong><small id="metricCoDelta">Scenario − baseline</small></article>
+              <article class="metric-card"><span>Mean arterial pressure</span><strong id="metricMap">—</strong><small id="metricMapDelta">Scenario − baseline</small></article>
+            </div>
+            <div class="charts-grid">
+              <article class="chart-card"><div class="chart-heading"><div><h3>Pressure over final cycles</h3><p>Left ventricle and arterial pressure</p></div><div class="legend"><span class="lv-dot"></span>LV <span class="art-dot"></span>Arterial</div></div><canvas id="pressureChart" aria-label="Pressure chart" role="img"></canvas></article>
+              <article class="chart-card"><div class="chart-heading"><div><h3>LV volume over final cycles</h3><p>Ventricular filling and ejection</p></div><div class="legend"><span class="volume-dot"></span>Volume</div></div><canvas id="volumeChart" aria-label="Left ventricular volume chart" role="img"></canvas></article>
+            </div>
+            <article class="comparison-card"><div class="comparison-heading"><div><h3>Baseline and scenario</h3><p>Model estimates from the current simulation run</p></div><button id="downloadResults" class="button small ghost" type="button" disabled>Download CSV</button></div><div class="table-wrap"><table><thead><tr><th>Metric</th><th>Baseline</th><th>Scenario</th><th>Change</th></tr></thead><tbody id="comparisonBody"><tr class="empty-row"><td colspan="4">No simulation output yet.</td></tr></tbody></table></div></article>
+          </section>
+        </section>
+
+        <section id="patientsView" class="view" hidden>
+          <section class="library-header"><div><p class="eyebrow">RESEARCH WORKSPACE</p><h1>Patient library</h1><p>Select an existing research record or start a fresh draft. This prototype keeps records only in the current browser session.</p></div><button class="button primary" id="newPatientFromLibrary" type="button">＋ New patient</button></section>
+          <section class="panel library-panel"><div class="library-toolbar"><label class="search-field"><span>⌕</span><input id="patientSearch" type="search" placeholder="Search by study ID" /></label><span id="patientCount" class="record-count"></span></div><div class="table-wrap"><table class="patient-table"><thead><tr><th>Study ID</th><th>Age band</th><th>Functional class</th><th>Measurement source</th><th>Last edited</th><th></th></tr></thead><tbody id="patientList"></tbody></table></div></section>
+        </section>
+
+        <section id="methodsView" class="view" hidden>
+          <section class="library-header"><div><p class="eyebrow">MODEL TRANSPARENCY</p><h1>How this research twin works</h1><p>A visual workspace for a patient-specific, closed-loop cardiovascular model.</p></div></section>
+          <section class="methods-grid"><article class="panel method-card"><span>01</span><h2>Source measurements</h2><p>Heart rate, blood pressure and LVEF establish the baseline. EDV and ESV are used when both are supplied; otherwise the backend derives reference volumes.</p></article><article class="panel method-card"><span>02</span><h2>Calibration</h2><p>The simulator calibrates contractility so its baseline reproduces the supplied LVEF, then solves a closed-loop circulation over repeated cardiac cycles.</p></article><article class="panel method-card"><span>03</span><h2>Scenario</h2><p>Controls perturb contractility, preload, afterload and heart rate on the fitted baseline. They do not alter the entered or extracted source values.</p></article></section>
+          <section class="notice research-notice"><span>⚑</span><p><strong>Interpretation.</strong> This interface surfaces research outputs only. It does not validate clinical suitability, automate diagnosis, or make treatment recommendations.</p></section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><div><p class="eyebrow">CONNECTION</p><h2>Simulation service</h2></div><button class="close-dialog" aria-label="Close settings">×</button></div><p>Use the FastAPI address when this site is opened separately. When it is served by the backend, leave the default intact.</p><label>API base URL<input id="apiBaseInput" type="url" placeholder="http://localhost:8000/api" /></label><div class="dialog-actions"><button id="checkConnection" class="button ghost" type="button">Test connection</button><button id="saveSettings" class="button primary" value="default" type="submit">Save</button></div><p id="settingsFeedback" class="settings-feedback"></p></form></dialog>
+    <dialog id="patientDialog" class="patient-dialog" aria-label="Patient record editor"></dialog>
+    <dialog id="helpDialog" class="help-dialog"><form method="dialog"><button class="close-dialog help-close" aria-label="Close">×</button><p class="eyebrow">VOLUME RESOLUTION</p><h2>How are ventricular volumes used?</h2><p>If both EDV and ESV are entered or returned by the configured EchoNet volume estimator, the twin uses those reported volumes. If neither is available, the backend derives a reference ventricular volume from the other patient measurements. The API rejects a lone EDV or ESV to prevent ambiguous input.</p><button class="button primary" value="close">Got it</button></form></dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

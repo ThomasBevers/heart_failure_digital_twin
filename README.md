@@ -9,24 +9,23 @@ A patient-specific, closed-loop cardiovascular simulator for heart failure resea
 - **Digital twin simulation** — enter a patient's heart rate, blood pressure, and LVEF; the app calibrates a closed-loop 0D cardiovascular model (time-varying-elastance left ventricle, forward-only mitral/aortic valves, arterial + venous compliance) to match it, then lets you run "what-if" scenarios (contractility, preload, afterload, heart-rate changes) and see the resulting pressure/volume traces.
 - **EchoNet-based EF prediction** — optionally upload an A4C echo video/DICOM and get an EF prediction from the official pretrained EchoNet-Dynamic checkpoint, instead of typing EF in by hand.
 - **EDV/ESV estimation** — optional, trainable video-feature regression model for end-diastolic/end-systolic volume, as a research-grade proxy (not true LV segmentation).
-- **Zigong cohort tooling** — scripts to clean and summarize the PhysioNet "hospitalized patients with heart failure" (Zigong) dataset.
+
 
 ## Project structure
 
 ```
 .
 ├── app.py                       # Streamlit UI
-├── src/heart_twin/              # Core package (self-contained, no external framework deps)
+├── backend/src              # Core package (self-contained, no external framework deps)
 │   ├── patient.py                #   PatientProfile: validated inputs + EDV/ESV resolution
 │   ├── physiology.py             #   Closed-loop 0D cardiovascular model
 │   ├── twin.py                   #   Baseline calibration + what-if scenario orchestration
 │   ├── imaging.py                #   DICOM/video inspection, conversion, preview (no inference)
 │   ├── echonet_integration.py    #   EF + EDV/ESV inference against real checkpoints
-│   └── cohort.py                 #   Zigong cohort loading/cleaning
+│   
 ├── scripts/
 │   ├── download_echonet_weights.py  # Fetch the official pretrained EF/segmentation checkpoints
 │   ├── train_volume_estimator.py    # Train the optional EDV/ESV estimator (configurable split sizes)
-│   ├── build_cohort.py              # Clean the Zigong cohort into artifacts/zigong_cohort_clean.csv
 │   ├── inspect_echo_study.py        # CLI: inspect one video's technical metadata
 │   └── validate_echo_dataset.py     # CLI: validate a local EchoNet-Dynamic dataset copy
 ├── vendor/echonet_dynamic/      # Vendored upstream EchoNet-Dynamic repo (untouched)
@@ -84,13 +83,6 @@ python scripts/train_volume_estimator.py
 
 This writes `outputs/echonet_volume_estimator.joblib`, which the app picks up automatically. Both checkpoint and estimator paths can be overridden via `ECHONET_EF_CHECKPOINT` / `ECHONET_VOLUME_ESTIMATOR` environment variables if you'd rather point at your own.
 
-## Optional: Zigong cohort
-
-```bash
-python scripts/build_cohort.py --data-dir data/zigong --output artifacts/zigong_cohort_clean.csv
-```
-
-Expects the raw PhysioNet Zigong files (`dat.csv`, `dat_md.csv`, ...) in `--data-dir`; raw files are never modified.
 
 ## The physiology model
 
