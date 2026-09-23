@@ -16,7 +16,7 @@ scikit-learn==1.8.0
 # These are large (torch alone is several hundred MB) and pull in CUDA
 # libraries by default even on machines with no GPU. If you don't have an
 # NVIDIA GPU, install the smaller CPU-only build instead of the two lines
-# below:
+# below:.
 #   pip install torch==2.14.0 torchvision==0.29.0 --index-url https://download.pytorch.org/whl/cpu
 torch==2.14.0
 torchvision==0.29.0
