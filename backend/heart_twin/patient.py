@@ -47,6 +47,7 @@ class PatientProfile:
     diastolic_bp_mmhg: float
     lvef_percent: float
     lv_diameter_cm: Optional[float] = None
+    weight_kg: Optional[float] = None
     edv_ml: Optional[float] = None
     esv_ml: Optional[float] = None
     age_band: str = "Not provided"
@@ -65,6 +66,8 @@ class PatientProfile:
         self._require_range("LVEF", self.lvef_percent, 1.0, 100.0)
         if self.lv_diameter_cm is not None:
             self._require_range("LV diameter", self.lv_diameter_cm, 1.0, 10.0)
+        if self.weight_kg is not None:
+            self._require_range("Weight", self.weight_kg, 1.0, 300.0)
         if (self.edv_ml is None) != (self.esv_ml is None):
             raise PatientInputError("Provide both EDV and ESV, or leave both blank.")
         if self.edv_ml is not None and self.esv_ml is not None:

@@ -34,6 +34,7 @@ class PatientInput(BaseModel):
     diastolic_bp_mmhg: float = Field(..., gt=0, le=200)
     lvef_percent: float = Field(..., gt=0, le=100)
     lv_diameter_cm: Optional[float] = Field(None, ge=1, le=10, description="LV end-diastolic diameter (cm).")
+    weight_kg: Optional[float] = Field(None, ge=1, le=300, description="Patient weight in kilograms.")
     edv_ml: Optional[float] = Field(None, ge=1, le=1000)
     esv_ml: Optional[float] = Field(None, ge=0, le=1000)
     age_band: str = "Not provided"

@@ -85,7 +85,8 @@
                 <div class="form-section-label"><span>Identity and context</span><em>Workspace fields are held in this browser session</em></div>
                 <div class="field-grid three">
                   <label>Patient / study ID<input id="identifier" name="identifier" placeholder="e.g. HF-042" required maxlength="60" /></label>
-                  <label>Age band<select id="ageBand" name="ageBand"><option>Not provided</option><option>≤49</option><option>50–59</option><option>60–69</option><option>70–79</option><option>≥80</option></select></label>
+                  <label>Weight (kg)<input id="weight" name="weight" type="number" min="1" max="300" step="0.1" placeholder="70" required /></label>
+                  <label>Age band<select id="ageBand" name="ageBand"><option>Not provided</option><option>≤1 Month</option><option>1 Month - 12 Years</option><option>>12 Years</option></select></label>
                   <label>Sex<select id="sex" name="sex"><option>Not provided</option><option>Female</option><option>Male</option></select></label>
                 </div>
 

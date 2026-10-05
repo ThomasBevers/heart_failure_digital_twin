@@ -315,6 +315,7 @@ function buildPatientPayload() {
     systolic_bp_mmhg: numberValue("#systolicBp"),
     diastolic_bp_mmhg: numberValue("#diastolicBp"),
     lv_diameter_cm: numberValue("#lvDiameter", { optional: true }),
+    weight_kg: numberValue("#weight"),
     age_band: $("#ageBand").value,
     sex: $("#sex").value,
     nyha_class: $("#nyha").value
@@ -342,6 +343,7 @@ function buildRecord(payload) {
     id: payload.identifier, ageBand: payload.age_band, sex: payload.sex, nyha: payload.nyha_class,
     heartRate: payload.heart_rate_bpm, systolicBp: payload.systolic_bp_mmhg, diastolicBp: payload.diastolic_bp_mmhg,
     lvef: payload.lvef_percent, edv: payload.edv_ml, esv: payload.esv_ml, lvDiameter: payload.lv_diameter_cm,
+    weightKg: payload.weight_kg,
     source: state.source === "echonet" ? "EchoNet extraction" : "Manual entry",
     echo: state.source === "echonet" ? { result: state.echo.result, confirmed: state.echo.confirmed } : null,
     edited: "Just now"
